@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="../../static/js/jquery-3.4.1.min.js"></script>
+    <title>教室表</title>
+</head>
+<body>
+<h2>教师信息表</h2>
+<table  class="table table-striped">
+    <tr>
+        <th>序号</th>
+        <th>班级名</th>
+        <th>人数</th>
+        <th>代课老师</th>
+        <th>图片</th>
+        <th>操作</th>
+    </tr>
+</table>
+
+<div class="tj-box">
+    <!--    <form class="form-horizontal" enctype="multipart/form-data">-->
+    <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">班级名</label>
+        <div class="col-sm-10">
+            <select name="name" id="name" class="form-control">
+                <option value="UAIF1906">UAIF1906</option>
+                <option value="UAIF1907">UAIF1907</option>
+                <option value="UAIF1908">UAIF1908</option>
+                <option value="UAIF1909">UAIF1909</option>
+                <option value="UAIF1910">UAIF1910</option>
+                <option value="UAIF1911">UAIF1911</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="num" class="col-sm-2 control-label">人数</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="num" name="num" placeholder="请输入人数">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="teacher" class="col-sm-2 control-label">代课老师</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="teacher" name="teacher" placeholder="请输入代课老师">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="img" class="col-sm-2 control-label">图片</label>
+        <div class="col-sm-10">
+            <input type="file"  id="img" name="img" placeholder="请输入图片">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-success" id="up">提交</button>
+        </div>
+    </div>
+    <!--    </form>-->
+</div>
+</body>
+<style>
+    a{
+        text-decoration: none;
+        color: white;
+    }
+    .tj-box{
+        width: 500px;
+        height: 400px;
+        background-color: peachpuff;
+        /*margin: 0 auto;*/
+        /*padding: 10px 30px 10px 10px;*/
+        /*box-sizing: border-box;*/
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        padding-top: 30px;
+        border: 1px solid #333333;
+        display: none;
+    }
+    .form-group{
+        display: flex;
+    }
+</style>
+<script>
+    $.ajax({
+        url:"/classroom/get",
+        type:"get",
+        success:function(data){
+            render(data)
+        }
+    })
+
+    function render(data){
+        // console.log(data[0]['name'])
+        for(let item of data){
+            // console.log(item['id'])
+            $(`
+            <tr>
+                <td class="id" sid="${item['id']}">${data.indexOf(item) + 1}</td>
+                <td class="name">${item['name']}</td>
+                <td class="num">${item['num']}</td>
+                <td class="teacher">${item['teacher']}</td>
+                <td class="img">${item['img']}</td>
+                <td>
+                    <button class="del btn btn-danger">
+                        删除
+                    </button>
+                    <button class="edit btn btn-warning">编辑</button>
+                </td>
+            </tr>
+            `).appendTo($(".table tbody"))
+        }
+    }
+
+    //事件委派
+    $("table").click(function(e){
+        let target = $(e.target);
+        if(target.hasClass("del")){
+            //删除
+            $.ajax({
+                url:"/classroom/del",
+                type:"delete",
+                data:{id:target.parents("tr").children('td').eq(0).attr("sid")},
+                success:function(e){
+                    if(e.status=='yes'){
+                        target.parents("tr").detach()
+                        console.log(e.msg)
+                    }else{
+                        console.log(e.msg)
+                    }
+                }
+            })
+        }else if(target.hasClass("edit")){
+            //       修改
+            $('.tj-box').fadeIn();
+            // console.log($('.edit'));
+            let tr =$('.edit').parents("tr");
+            // console.log($('.edit').parents("tr"));
+            let children = tr.children("td");
+            // console.log($('.edit').parents("tr").children('td'));
+            // console.log($('.edit').parents("tr").children('td').eq(0).text())
+            let id = children.eq(0).text();
+            $('#up').attr('sid',id);
+            $('[name=name]').val(children.eq(1).text());
+            $('[name=num]').val(children.eq(2).text());
+            $('[name=teacher]').val(children.eq(3).text());
+            $('[name=img]').val(children.eq(4).text());
+
+        }
+
+    });
+    $('#up').click(function () {
+        $.ajax({
+            url:'edit',
+            type:'post',
+            data:{
+                id:$('#up').attr('sid'),
+                name:$('[name=name]').val(),
+                num:$('[name=num]').val(),
+                teacher:$('[name=teacher]').val(),
+                img:$('[name=img]').val(),
+            },
+            success:function (e) {
+                alert('成功');
+                console.log(e)
+                $('.tj-box').fadeOut();
+            },
+            error:function (e) {
+                console.log(e)
+            }
+        })
+    })
+
+</script>
+</html>

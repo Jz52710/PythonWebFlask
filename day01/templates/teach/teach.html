@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="../../static/js/jquery-3.4.1.min.js"></script>
+    <script src="../../static/js/teach.js"></script>
+    <title>老师表</title>
+</head>
+<body>
+<h2>教师信息表</h2>
+<table  class="table table-striped">
+    <tr>
+        <th>序号</th>
+        <th>姓名</th>
+        <th>工号</th>
+        <th>性别</th>
+        <th>职位</th>
+        <th>电话</th>
+        <th>操作</th>
+    </tr>
+    {% for item in data %}
+    <tr>
+        <td class="id">{{ item[0] }}</td>
+        <td class="name">{{ item[1] }}</td>
+        <td class="num">{{ item[2] }}</td>
+        <td class="sex" val="{{ item[3] }}">
+            {% if item[3] == 1%}
+            男
+            {% else %}
+            女
+            {% endif %}
+        </td>
+        <td class="job">{{ item[4] }}</td>
+        <td class="call">{{ item[5] }}</td>
+        <td>
+            <button type="button" class="btn btn-success edit">更改</button>
+            <button type="button" class="btn btn-danger">
+                <a href="del/{{ item[0] }}">删除</a></button>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="tj-box">
+    <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">姓名</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="name" name="name" placeholder="请输入姓名">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="num" class="col-sm-2 control-label">工号</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="num" name="num" placeholder="请输入工号">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="female" class="col-sm-2 control-label">性别</label>
+        <div class="col-sm-10">
+            <input type="radio" name="sex" value="0" id="female">男
+            <input type="radio" name="sex" value="1" id="female">女
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="job" class="col-sm-2 control-label">职位</label>
+        <div class="col-sm-10">
+            <select name="job" id="job" class="form-control">
+                <option value="教授">教授</option>
+                <option value="院长">院长</option>
+                <option value="副教授">副教授</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="tall" class="col-sm-2 control-label">电话</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="tall" name="tall" placeholder="请输入电话">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-success" id="up">提交</button>
+        </div>
+    </div>
+</div>
+</body>
+<style>
+    a{
+        text-decoration: none;
+        color: white;
+    }
+    .tj-box{
+        width: 500px;
+        height: 400px;
+        background-color: peachpuff;
+        /*margin: 0 auto;*/
+        /*padding: 10px 30px 10px 10px;*/
+        /*box-sizing: border-box;*/
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        padding-top: 30px;
+        border: 1px solid #333333;
+        display: none;
+    }
+    .form-group{
+        display: flex;
+    }
+</style>
+
+</html>
